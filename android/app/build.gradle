@@ -44,7 +44,7 @@ android {
 
     defaultConfig {
         applicationId "chat.fluffy.fluffychat"
-        minSdkVersion 18
+        minSdkVersion 24 //Required for Jitsi
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -73,7 +73,7 @@ android {
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
-
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

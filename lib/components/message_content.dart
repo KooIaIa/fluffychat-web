@@ -3,9 +3,9 @@ import 'package:fluffychat/components/audio_player.dart';
 import 'package:fluffychat/components/image_bubble.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/event_extension.dart';
+import 'package:fluffychat/utils/jitsi_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:link_text/link_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'matrix.dart';
 import 'message_download_content.dart';
 import 'html_message.dart';
@@ -75,7 +75,11 @@ class MessageContent extends StatelessWidget {
                     Text(L10n.of(context).videoCall),
                   ],
                 ),
-                onPressed: () => launch(event.body),
+                onPressed: () => JitsiController.joinCall(
+                  context,
+                  event.body,
+                  event.room.getLocalizedDisplayname(L10n.of(context)),
+                ),
               );
             }
             return LinkText(

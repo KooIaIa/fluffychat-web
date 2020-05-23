@@ -7,12 +7,10 @@ import 'package:fluffychat/utils/firebase_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../l10n/l10n.dart';
 import '../utils/beautify_string_extension.dart';
 import '../utils/famedlysdk_store.dart';
-import 'avatar.dart';
+import 'dialogs/call_dialog.dart';
 
 class Matrix extends StatefulWidget {
   static const String callNamespace = 'chat.fluffy.jitsi_call';
@@ -106,49 +104,9 @@ class MatrixState extends State<Matrix> {
         1000 * 60 * 5) {
       return;
     }
-    final senderName = event.sender.calcDisplayname();
-    final senderAvatar = event.sender.avatarUrl;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(L10n.of(context).videoCall),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              contentPadding: EdgeInsets.all(0),
-              leading: Avatar(senderAvatar, senderName),
-              title: Text(
-                senderName,
-                style: TextStyle(fontSize: 18),
-              ),
-              subtitle:
-                  event.room.isDirectChat ? null : Text(event.room.displayname),
-            ),
-            Divider(),
-            Row(
-              children: <Widget>[
-                Spacer(),
-                FloatingActionButton(
-                  backgroundColor: Colors.red,
-                  child: Icon(Icons.phone_missed),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                Spacer(),
-                FloatingActionButton(
-                  backgroundColor: Colors.green,
-                  child: Icon(Icons.phone),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    launch(event.body);
-                  },
-                ),
-                Spacer(),
-              ],
-            ),
-          ],
-        ),
-      ),
+      builder: (context) => CallDialog(event),
     );
     return;
   }

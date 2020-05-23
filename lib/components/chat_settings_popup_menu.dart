@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/l10n/l10n.dart';
 import 'package:fluffychat/utils/app_route.dart';
+import 'package:fluffychat/utils/jitsi_controller.dart';
 import 'package:fluffychat/views/chat_details.dart';
 import 'package:fluffychat/views/chat_list.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'dialogs/simple_dialogs.dart';
 import 'matrix.dart';
@@ -39,7 +39,11 @@ class _ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
       'body': url,
     }));
     if (success == false) return;
-    await launch(url);
+    JitsiController.joinCall(
+      context,
+      url,
+      widget.room.getLocalizedDisplayname(L10n.of(context)),
+    );
   }
 
   @override
