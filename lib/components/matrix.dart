@@ -96,7 +96,6 @@ class MatrixState extends State<Matrix> {
         if (session != null) 'session': session,
       };
 
-  StreamSubscription onRoomKeyRequestSub;
   StreamSubscription onJitsiCallSub;
 
   void onJitsiCall(EventUpdate eventUpdate) {
@@ -167,20 +166,6 @@ class MatrixState extends State<Matrix> {
               e.content['content']['msgtype'] == Matrix.callNamespace &&
               e.content['sender'] != client.userID)
           .listen(onJitsiCall);
-      onRoomKeyRequestSub ??=
-          client.onRoomKeyRequest.stream.listen((RoomKeyRequest request) async {
-        final room = request.room;
-        final sender = room.getUserByMXIDSync(request.sender);
-        if (await SimpleDialogs(context).askConfirmation(
-          titleText: L10n.of(context).requestToReadOlderMessages,
-          contentText:
-              '${sender.id}\n\n${L10n.of(context).device}:\n${request.requestingDevice.deviceId}\n\n${L10n.of(context).identity}:\n${request.requestingDevice.curve25519Key.beautified}',
-          confirmText: L10n.of(context).verify,
-          cancelText: L10n.of(context).deny,
-        )) {
-          await request.forwardKey();
-        }
-      });
       _initWithStore();
     } else {
       client = widget.client;
@@ -206,7 +191,6 @@ class MatrixState extends State<Matrix> {
 
   @override
   void dispose() {
-    onRoomKeyRequestSub?.cancel();
     onJitsiCallSub?.cancel();
     super.dispose();
   }
