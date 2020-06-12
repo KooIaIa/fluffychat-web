@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:famedlysdk/encryption.dart';
-import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/utils/firebase_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +9,6 @@ import 'package:localstorage/localstorage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../l10n/l10n.dart';
-import '../utils/beautify_string_extension.dart';
 import '../utils/famedlysdk_store.dart';
 import 'avatar.dart';
 
