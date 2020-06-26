@@ -35,6 +35,7 @@ void main() async {
     print('Processing language $lang...');
     final rawTranslationData = await File(file.path).readAsString();
     final translationData = json.decode(rawTranslationData);
+    var modified = false;
     for (final translationKey in translationKeys) {
       if (translationData.containsKey(translationKey)) {
         continue;
@@ -42,10 +43,20 @@ void main() async {
       print('Missing translation "$translationKey", copying...');
       translationData[translationKey] = templateData[translationKey];
       translationData['@$translationKey'] = templateData['@$translationKey'];
+      modified = true;
+    }
+    if (modified) {
+      translationData['@@last_modified'] = DateTime.now().toString();
     }
     // sort it
     final entries = translationData.entries.toList();
     entries.sort((e1, e2) {
+      if (e1.key.startsWith('@@') && !e2.key.startsWith('@@')) {
+        return -1;
+      }
+      if (!e1.key.startsWith('@@') && e2.key.startsWith('@@')) {
+        return 1;
+      }
       String a = e1.key.replaceAll(RegExp(r'^[^a-zA-Z]*'), '');
       String b = e2.key.replaceAll(RegExp(r'^[^a-zA-Z]*'), '');
       if (a == b) {

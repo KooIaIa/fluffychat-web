@@ -1,4 +1,5 @@
 {
+  "@@last_modified": "2020-06-26 12:07:29.214512",
   "About": "Névjegy",
   "@About": {
     "type": "text",
@@ -783,7 +784,6 @@
     "type": "text",
     "placeholders": {}
   },
-  "@@last_modified": "2020-04-12T11:11:56.595233",
   "lastActiveAgo": "Utoljára aktív: {localizedTimeShort}",
   "@lastActiveAgo": {
     "type": "text",

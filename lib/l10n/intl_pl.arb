@@ -1,4 +1,5 @@
 {
+  "@@last_modified": "2020-06-26 12:07:29.234873",
   "About": "O nas",
   "@About": {
     "type": "text",
@@ -776,7 +777,6 @@
     "type": "text",
     "placeholders": {}
   },
-  "@@last_modified": "2020-05-07T16:53:12.100694",
   "lastActiveAgo": "Ostatnio widziano: {localizedTimeShort}",
   "@lastActiveAgo": {
     "type": "text",
