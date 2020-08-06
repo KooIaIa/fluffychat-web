@@ -9,7 +9,8 @@ import 'package:moor/isolate.dart';
 import 'cipher_db.dart' as cipher;
 
 class DatabaseNoTransactions extends Database {
-  DatabaseNoTransactions.connect(DatabaseConnection connection) : super.connect(connection);
+  DatabaseNoTransactions.connect(DatabaseConnection connection)
+      : super.connect(connection);
 
   // moor transactions are sometimes rather weird and freeze. Until there is a
   // proper fix in moor we override that there aren't actually using transactions
