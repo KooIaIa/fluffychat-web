@@ -1,23 +1,44 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 
 import 'package:famedlysdk/famedlysdk.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:localstorage/localstorage.dart';
-import 'dart:async';
-import 'dart:core';
-import './database/shared.dart';
+import 'package:moor/backends.dart';
 import 'package:olm/olm.dart' as olm; // needed for migration
 import 'package:random_string/random_string.dart';
 
-Future<Database> getDatabase(Client client) async {
+import 'database/shared.dart';
+
+Future<Database> getDatabase([Client client, bool important = false]) async {
   while (_generateDatabaseLock) {
     await Future.delayed(Duration(milliseconds: 50));
   }
   _generateDatabaseLock = true;
   try {
-    if (_db != null) return _db;
+    if (_db != null) {
+      debugPrint('[Moor] Attemtping to use cached database object...');
+      try {
+        if (!(_db.executor is DelegatedDatabase) ||
+            (_db.executor as DelegatedDatabase).delegate.isOpen) {
+          await _db.customSelect('SELECT 1').get();
+          debugPrint('[Moor] using cached database object...');
+          _important |= important;
+          return _db;
+        }
+      } catch (_) {
+        // do nothing, re-build new db
+      }
+      if (_important && !important) {
+        throw 'Database is important but defunct';
+      }
+      await _db.close(); // close the old instance
+    }
+    _important |= important;
+    debugPrint('[Moor] generating new database object...');
     final store = Store();
     var password = await store.getItem('database-password');
     var needMigration = false;
@@ -31,6 +52,10 @@ Future<Database> getDatabase(Client client) async {
       password: password,
     );
     if (needMigration) {
+      if (client == null) {
+        _db = null;
+        return null;
+      }
       await migrate(client.clientName, _db, store);
       await store.setItem('database-password', password);
     }
@@ -41,6 +66,7 @@ Future<Database> getDatabase(Client client) async {
 }
 
 Database _db;
+bool _important = false;
 bool _generateDatabaseLock = false;
 
 Future<void> migrate(String clientName, Database db, Store store) async {
@@ -186,7 +212,9 @@ Future<void> migrate(String clientName, Database db, Store store) async {
               entry.key,
               entry.value['inboundGroupSession'],
               json.encode(entry.value['content']),
-              json.encode(entry.value['indexes']));
+              json.encode(entry.value['indexes']),
+              null,
+              null);
         }
       }
     }
